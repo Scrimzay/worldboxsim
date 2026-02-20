@@ -429,7 +429,8 @@ function draw() {
 }
 
 // WebSocket connection
-const ws = new WebSocket(`ws://${location.host}/ws`);
+const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
 ws.binaryType = 'arraybuffer';
 ws.onopen = () => console.log('WS connected');
 ws.onmessage = (event) => {

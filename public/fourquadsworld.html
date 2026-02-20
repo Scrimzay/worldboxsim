@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Simulation - All Out FFA</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <canvas id="world"></canvas>
+
+    <!-- LEFT SIDEBAR - Speed & Pause Controls -->
+    <div id="leftControls">
+        <div class="control-section">
+            <div class="control-label">Speed</div>
+            <button id="plus">+</button>
+            <div id="speedDisplay">1x</div>
+            <button id="minus">-</button>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="control-section">
+            <button id="pause">Pause</button>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR - Drawing Tools -->
+    <div id="rightToolbar">
+        <div class="section-title">Zoom</div>
+        <div id="zoomDisplay">100%</div>
+        <div class="control-hint">
+            Mouse Wheel: Zoom<br>
+            +/- Keys: Zoom<br>
+            Shift+Drag: Pan<br>
+            Arrows: Pan<br>
+            Key: Reset View
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="section-title">Tools</div>
+        <button data-tool="0" onclick="setTool(0)">Erase</button>
+        <button data-tool="1" onclick="setTool(1)">Grass Terrain</button>
+        <button data-tool="2" onclick="setTool(2)">Snow Terrain</button>
+        <button data-tool="9" onclick="setTool(9)">Desert Terrain</button>
+        <button data-tool="10" onclick="setTool(10)">Cemetary Terrain</button>
+        <button data-tool="3" onclick="setTool(3)">Entity</button>
+        <button data-tool="4" onclick="setTool(4)">Border</button>
+        <button data-tool="6" onclick="setTool(6)">Trees</button>
+        <button data-tool="7" onclick="setTool(7)">Rocks</button>
+        <button data-tool="8" onclick="setTool(8)">Hills</button>
+        
+        <div class="divider"></div>
+        
+        <div class="section-title">Brush Size</div>
+        <button data-brush="1" onclick="setBrushSize(1)">1×1</button>
+        <button data-brush="3" onclick="setBrushSize(3)">3×3</button>
+        <button data-brush="5" onclick="setBrushSize(5)">5×5</button>
+        
+        <div class="divider"></div>
+        
+        <button id="fillModeBtn" onclick="toggleFillMode()">Fill Mode (Off)</button>
+        
+        <div class="divider"></div>
+        
+        <div class="control-hint" style="background: rgba(255, 215, 0, 0.1); color: #FFD700;">
+            Left-Click: Draw/Place<br>
+            Right-Click: Inspect Entity
+        </div>
+        
+        <div class="divider"></div>
+        
+        <button id="startWar">Start War</button>
+        <button onclick="resetWorld()">Reset World</button>
+    </div>
+
+    <!-- TOP LEFT - Stats Display -->
+    <div id="statsDisplay">
+        <div>
+            <span id="northLeftTribeName">Tribe 1</span>: <span id="northLeftCount">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            <span id="northLeftWood">0</span> | 
+            <span id="northLeftStone">0</span>
+        </div>
+        
+        <div style="margin-top: 10px;">
+            <span id="northRightTribeName">Tribe 2</span>: <span id="northRightCount">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            <span id="northRightWood">0</span> | 
+            <span id="northRightStone">0</span>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <span id="southLeftTribeName">Tribe 3</span>: <span id="southLeftCount">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            <span id="southLeftWood">0</span> | 
+            <span id="southLeftStone">0</span>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <span id="southRightTribeName">Tribe 4</span>: <span id="southRightCount">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            <span id="southRightWood">0</span> | 
+            <span id="southRightStone">0</span>
+        </div>
+    </div>
+
+    <!-- CENTER - Victory Message -->
+    <div id="victoryMessage"></div>
+
+    <!-- Inspect Popup -->
+    <div id="inspectPopup" style="display: none; position: absolute; background: rgba(0,0,0,0.9); color: white; padding: 10px; border-radius: 5px; pointer-events: none; z-index: 1000;">
+        <div><strong id="entityName">Entity</strong></div>
+        <div>Rank: <span id="entityRank">Base</span></div>
+        <div>Health: <span id="entityHealth">100</span></div>
+        <div>Weapon: <span id="entityWeapon">None</span></div>
+        <div>Armor: <span id="entityArmor">None</span></div>
+        <div>Total Damage: <span id="entityDamage">5</span></div>
+        <div>Defense: <span id="entityDefense">0</span></div>
+        <div>Evasion: <span id="entityEvasion">0%</span></div>
+    </div>
+
+    <script src="/static/fourquads/fourquadsworld.js"></script>
+</body>
+</html>

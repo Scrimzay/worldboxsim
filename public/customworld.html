@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Map Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+
+        #leftControls {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 100;
+        }
+
+        #rightToolbar {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 200px;
+            z-index: 100;
+        }
+
+        #statsDisplay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            z-index: 100;
+            display: none; /* Hidden until phase 4 */
+        }
+
+        #victoryMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 215, 0, 0.95);
+            color: #000;
+            padding: 40px 60px;
+            border-radius: 20px;
+            font-size: 48px;
+            font-weight: bold;
+            display: none;
+            z-index: 200;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #333;
+            color: white;
+            border: 2px solid #555;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #444;
+            border-color: #777;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background: #222;
+            color: #666;
+            cursor: not-allowed;
+            border-color: #333;
+        }
+
+        button.active {
+            background: #0066cc;
+            border-color: #0088ff;
+        }
+
+        .control-section {
+            margin: 10px 0;
+        }
+
+        .control-label {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        #speedDisplay, #zoomDisplay {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .divider {
+            height: 2px;
+            background: #555;
+            margin: 15px 0;
+        }
+
+        .section-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        .control-hint {
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+            line-height: 1.5;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        #startWar {
+            background: #cc0000;
+            border-color: #ff0000;
+        }
+
+        #startWar:hover {
+            background: #ff0000;
+        }
+
+        #startWar:disabled {
+            background: #660000;
+            border-color: #440000;
+        }
+
+        /* Phase Controls */
+        #phaseControls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        #phaseControls button {
+            width: auto;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #nextPhaseBtn {
+            background: #00aa00;
+            border-color: #00ff00;
+        }
+
+        #nextPhaseBtn:hover {
+            background: #00cc00;
+        }
+
+        #prevPhaseBtn {
+            background: #666;
+            border-color: #888;
+        }
+
+        #resetBuilderBtn {
+            background: #ff4444;
+            border-color: #ff6666;
+        }
+
+        /* Tribe Config Panel */
+        #tribeConfigPanel {
+            display: none;
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 350px;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 1000;
+            max-height: 70vh;
+            overflow-y: auto;
+            border: 2px solid #FFD700;
+        }
+
+        #tribeConfigPanel h2 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tribe-config {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            border: 1px solid #555;
+        }
+
+        .tribe-config h3 {
+            margin: 5px 0 10px 0;
+            color: #FFD700;
+            font-size: 16px;
+        }
+
+        .tribe-config select {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .tribe-config select:focus {
+            outline: none;
+            border-color: #FFD700;
+        }
+
+        #tribeConfigPanel button {
+            margin-top: 10px;
+        }
+
+        /* Phase Indicator */
+        #phaseIndicator {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 30px;
+            border-radius: 10px;
+            color: #FFD700;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 150;
+            border: 2px solid #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="world"></canvas>
+
+    <!-- Phase Indicator -->
+    <div id="phaseIndicator">Phase 1: Paint Terrain</div>
+
+    <!-- LEFT SIDEBAR - Speed & Pause Controls (Initially Hidden) -->
+    <div id="leftControls" style="display: none;">
+        <div class="control-section">
+            <div class="control-label">Speed</div>
+            <button id="plus">+</button>
+            <div id="speedDisplay">1x</div>
+            <button id="minus">-</button>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="control-section">
+            <button id="pause">Pause</button>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR - Drawing Tools -->
+    <div id="rightToolbar">
+        <div class="section-title">Zoom</div>
+        <div id="zoomDisplay">100%</div>
+        <div class="control-hint">
+            Mouse Wheel: Zoom<br>
+            +/- Keys: Zoom<br>
+            Shift+Drag: Pan<br>
+            Arrows: Pan<br>
+            0 Key: Reset View
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="section-title">Tools</div>
+        <button data-tool="0" onclick="setTool(0)">Erase</button>
+        <button data-tool="1" onclick="setTool(1)">Red Terrain</button>
+        <button data-tool="2" onclick="setTool(2)">Blue Terrain</button>
+        <button data-tool="9" onclick="setTool(9)">Yellow Terrain</button>
+        <button data-tool="10" onclick="setTool(10)">Green Terrain</button>
+        <button data-tool="4" onclick="setTool(4)" style="display: none;">Border</button>
+        <button data-tool="6" onclick="setTool(6)" style="display: none;">Trees</button>
+        <button data-tool="7" onclick="setTool(7)" style="display: none;">Rocks</button>
+        <button data-tool="8" onclick="setTool(8)" style="display: none;">Hills</button>
+        
+        <div class="divider"></div>
+
+        <button id="autoBorderBtn" onclick="autoGenerateBorders()" style="display: none; background: #00aa00; border-color: #00ff00;">
+            Auto-Generate Borders
+        </button>
+
+        <div class="divider"></div>
+        
+        <div class="section-title">Brush Size</div>
+        <button data-brush="1" onclick="setBrushSize(1)">1×1</button>
+        <button data-brush="3" onclick="setBrushSize(3)">3×3</button>
+        <button data-brush="5" onclick="setBrushSize(5)">5×5</button>
+        
+        <div class="divider"></div>
+        
+        <button id="fillModeBtn" onclick="toggleFillMode()">Fill Mode (Off)</button>
+        
+        <div class="divider"></div>
+        
+        <div class="control-hint" style="background: rgba(255, 215, 0, 0.1); color: #FFD700;">
+            Left-Click: Draw/Place<br>
+            Right-Click: Inspect Entity (Phase 4 only)
+        </div>
+        
+        <div class="divider"></div>
+        
+        <button id="startWar" disabled style="display: none;">Start War</button>
+        <button onclick="resetWorld()" style="display: none;">Reset World</button>
+    </div>
+
+    <!-- TOP LEFT - Stats Display (Hidden until phase 4) -->
+    <div id="statsDisplay">
+        <div>
+            <span id="tribe1Name">Tribe 1</span>: <span id="tribe1Count">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            🪵 <span id="tribe1Wood">0</span> | 
+            🪨 <span id="tribe1Stone">0</span>
+        </div>
+        
+        <div style="margin-top: 10px;">
+            <span id="tribe2Name">Tribe 2</span>: <span id="tribe2Count">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            🪵 <span id="tribe2Wood">0</span> | 
+            🪨 <span id="tribe2Stone">0</span>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <span id="tribe3Name">Tribe 3</span>: <span id="tribe3Count">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            🪵 <span id="tribe3Wood">0</span> | 
+            🪨 <span id="tribe3Stone">0</span>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <span id="tribe4Name">Tribe 4</span>: <span id="tribe4Count">0</span>
+        </div>
+        <div style="margin-left: 15px; font-size: 14px;">
+            🪵 <span id="tribe4Wood">0</span> | 
+            🪨 <span id="tribe4Stone">0</span>
+        </div>
+    </div>
+
+    <!-- CENTER - Victory Message -->
+    <div id="victoryMessage"></div>
+
+    <!-- Inspect Popup -->
+    <div id="inspectPopup" style="display: none; position: absolute; background: rgba(0,0,0,0.9); color: white; padding: 10px; border-radius: 5px; pointer-events: none; z-index: 1000;">
+        <div><strong id="entityName">Entity</strong></div>
+        <div>Rank: <span id="entityRank">Base</span></div>
+        <div>Health: <span id="entityHealth">100</span></div>
+        <div>Weapon: <span id="entityWeapon">None</span></div>
+        <div>Armor: <span id="entityArmor">None</span></div>
+        <div>Total Damage: <span id="entityDamage">5</span></div>
+        <div>Defense: <span id="entityDefense">0</span></div>
+        <div>Evasion: <span id="entityEvasion">0%</span></div>
+    </div>
+
+    <!-- Phase Navigation Controls -->
+    <div id="phaseControls">
+        <button id="prevPhaseBtn" onclick="previousPhase()" disabled>← Previous Phase</button>
+        <button id="nextPhaseBtn" onclick="nextPhase()">Next Phase →</button>
+        <button id="resetBuilderBtn" onclick="resetBuilder()">🔄 Reset Builder</button>
+    </div>
+
+    <!-- Tribe Configuration Panel -->
+    <div id="tribeConfigPanel">
+        <h2>Configure Tribes</h2>
+        <!-- Dynamically populated by JS -->
+    </div>
+
+    <script src="/static/custom/customworld.js"></script>
+</body>
+</html>

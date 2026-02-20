@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Simulation - Map Selection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 40px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #aaa;
+            margin-bottom: 50px;
+        }
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .map-button {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 40px 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .map-button:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .map-button.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .map-button.disabled:hover {
+            transform: none;
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: none;
+        }
+        .map-icon {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        .map-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .map-description {
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+        .map-tribes {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+        .coming-soon {
+            display: inline-block;
+            background: #444;
+            color: #aaa;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+        .vertical-map {
+            border-color: rgba(34, 139, 34, 0.4);
+        }
+        .vertical-map:hover {
+            border-color: rgba(34, 139, 34, 0.8);
+        }
+        .northsouth-map {
+            border-color: rgba(74, 144, 226, 0.4);
+        }
+        .northsouth-map:hover {
+            border-color: rgba(74, 144, 226, 0.8);
+        }
+        .quadrant-map {
+            border-color: rgba(255, 165, 0, 0.3);
+        }
+        .custom-map {
+            border-color: rgba(138, 43, 226, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> WORLD SIMULATION </h1>
+        <p class="subtitle">Choose your battlefield</p>
+        
+        <div class="map-grid">
+            <!-- Vertical Map -->
+            <a href="/play/vertical" class="map-button vertical-map">
+                <div class="map-icon">🌍</div>
+                <div class="map-title">Left vs Right</div>
+                <div class="map-description">
+                    Classic left vs right battlefield. Desert nomads face off against forest wanderers.
+                </div>
+                <div class="map-tribes">
+                    Nomads (Orcs) vs Wanderers (Elves)
+                </div>
+            </a>
+
+            <!-- North-South Map -->
+            <a href="/play/northsouth" class="map-button northsouth-map">
+                <div class="map-icon">❄️</div>
+                <div class="map-title">North vs South</div>
+                <div class="map-description">
+                    Frozen tundra clashes with haunted lands. Vikings battle the undead.
+                </div>
+                <div class="map-tribes">
+                    Norsca (Vikings) vs Sylvania (Vampires)
+                </div>
+            </a>
+
+            <a href="/play/fourquadrants" class="map-button fourquads-map">
+                <div class="map-icon">🗺️</div>
+                <div class="map-title">Four Tribe FFA</div>
+                <div class="map-description">
+                    Four tribes battle it out against each other to see who remains.
+                </div>
+                <div class="map-tribes">
+                    Norsca (Vikings) vs Sylvania (Vampires) vs Nomads (Orcs) vs Wanderers (Elves)
+                </div>
+            </a>
+
+            <!-- Custom Map (Coming Soon) -->
+            <a href="/play/custommap" class="map-button fourquads-map">
+                <div class="map-icon"></div>
+                <div class="map-title">Custom Map</div>
+                <div class="map-description">
+                    Create your own map and borders with any tribe you want to fight.
+                </div>
+                <div class="map-tribes">
+                    Any Tribes
+                </div>
+            </a>
+        </div>
+
+        <a href="/help" class="map-button fourquads-map">
+            <!-- <div class="map-icon">🗺️</div> -->
+            <div class="map-title">Help</div>
+            <!-- <div class="map-description">
+                Four tribes battle it out against each other to see who remains.
+            </div> -->
+            <div class="map-tribes">
+                If you need help with how to play, this is where you go.
+            </div>
+        </a>
+
+        <!-- <div style="margin-top: 50px; font-size: 12px; color: #666;">
+            <p>Right-click entities to inspect | Shift+Drag to pan | Scroll to zoom</p>
+        </div> -->
+    </div>
+</body>
+</html>

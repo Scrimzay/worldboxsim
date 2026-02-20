@@ -1,0 +1,317 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
+
+canvas {
+    cursor: crosshair;
+}
+
+/* LEFT SIDEBAR - Speed/Pause Controls */
+#leftControls {
+    position: fixed;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    background: rgba(30, 30, 30, 0.88);
+    padding: 20px 15px;
+    border-radius: 18px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+    width: 160px;
+}
+
+#leftControls .control-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#leftControls button {
+    width: 100%;
+    padding: 12px 16px;
+    background: #444;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#leftControls button:hover {
+    background: #666;
+    transform: scale(1.05);
+}
+
+#leftControls button:active {
+    transform: translateY(2px);
+}
+
+#speedDisplay {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    color: #4CAF50;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.control-label {
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* RIGHT TOOLBAR - Tools, Brush, Fill */
+#rightToolbar {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    bottom: 15px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(30, 30, 30, 0.88);
+    padding: 20px 18px;
+    border-radius: 18px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+    width: 220px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar for right toolbar */
+#rightToolbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+#rightToolbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+#rightToolbar::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+}
+
+#rightToolbar::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+.section-title {
+    width: 100%;
+    text-align: left;
+    font-size: 12px;
+    font-weight: bold;
+    color: #aaa;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.section-title:first-child {
+    margin-top: 0;
+}
+
+#rightToolbar button {
+    width: 100%;
+    padding: 12px 14px;
+    background: #444;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#rightToolbar button:hover {
+    background: #666;
+    transform: scale(1.03);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+#rightToolbar button:active {
+    transform: scale(0.98);
+}
+
+/* Button highlighting for selected tools */
+#rightToolbar button.active {
+    background: #4CAF50 !important;
+    color: white !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.6) !important;
+}
+
+#rightToolbar button[data-brush].active {
+    background: #2196F3 !important;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.6) !important;
+}
+
+/* Tool-specific colors (when NOT active) */
+button[data-tool="0"]:not(.active) { background: #555; }
+button[data-tool="1"]:not(.active) { background: #900000; }
+button[data-tool="2"]:not(.active) { background: #000090; }
+button[data-tool="3"]:not(.active) { background: #909000; }
+button[data-tool="4"]:not(.active) { background: #009000; }
+button[data-tool="6"]:not(.active) { background: #004400; }
+button[data-tool="7"]:not(.active) { background: #555555; }
+button[data-tool="8"]:not(.active) { background: #8B7355; }
+
+/* Reset button special styling */
+button[onclick="resetWorld()"]:not(.active) {
+    background: #900000;
+}
+
+#zoomDisplay {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: #2196F3;
+    text-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+    margin: 5px 0;
+}
+
+.control-hint {
+    font-size: 11px;
+    color: #777;
+    text-align: center;
+    line-height: 1.4;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin: 5px 0;
+}
+
+/* TOP LEFT - Stats Display */
+#statsDisplay {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 90;
+    background: rgba(30, 30, 30, 0.85);
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    line-height: 1.8;
+}
+
+#leftTribeName {
+    color: #ff6666;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#rightTribeName {
+    color: #6666ff;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#leftCount {
+    color: #ff6666;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#rightCount {
+    color: #6666ff;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#redWood, #blueWood {
+    color: #DEB887;
+    font-weight: bold;
+}
+
+#redStone, #blueStone {
+    color: #C0C0C0;
+    font-weight: bold;
+}
+
+/* CENTER - Victory Message */
+#victoryMessage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+    font-size: 72px;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 40px 80px;
+    border-radius: 24px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.6);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    color: #FFD700;
+    border: 3px solid #FFD700;
+    display: none;
+}
+
+/* Inspect Popup */
+#inspectPopup {
+    display: none;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 15px 20px;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    font-size: 14px;
+    line-height: 1.8;
+    min-width: 200px;
+}
+
+#inspectPopup > div {
+    margin: 4px 0;
+}
+
+#inspectPopup strong {
+    color: #4CAF50;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #4CAF50;
+    padding-bottom: 5px;
+}
+
+/* Disabled button state */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Divider for sections */
+.divider {
+    width: 100%;
+    height: 1px;
+    background: #555;
+    margin: 8px 0;
+}

@@ -353,7 +353,7 @@ function draw() {
 }
 
 // WebSocket connection
-const ws = new WebSocket(`wss://${window.location.host}/ws`);
+const ws = new WebSocket(`wss://${window.location.host}/wss`);
 ws.binaryType = 'arraybuffer';
 ws.onopen = () => console.log('WS connected');
 ws.onmessage = (event) => {

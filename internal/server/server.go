@@ -16,7 +16,7 @@ func SetupRouter(broadcaster *world.Broadcaster, gameWorld *world.World) *gin.En
 	r.GET("/play/:mapName", playHandler(gameWorld, broadcaster))
 	r.GET("/help", helpHandler)
 
-	r.GET("/ws", HandleWebsocket(broadcaster, gameWorld))
+	r.GET("/wss", HandleWebsocket(broadcaster, gameWorld))
 
 	return r
 }

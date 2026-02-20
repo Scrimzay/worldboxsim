@@ -352,8 +352,18 @@ function draw() {
 }
 
 // WebSocket connection
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+console.log('Window location:', window.location);
+console.log('Host:', window.location.host);
+console.log('Protocol:', window.location.protocol);
+console.log('Full WebSocket URL:', `wss://${window.location.host}/wss`);
+
+// Test if the server endpoint exists first
+fetch(`https://${window.location.host}/wss`, { method: 'OPTIONS' })
+  .then(() => console.log('WSS endpoint exists'))
+  .catch(err => console.log('WSS endpoint check failed:', err));
+
+//Then try the WebSocket connection
+const ws = new WebSocket(`wss://${window.location.host}/wss`);
 ws.binaryType = 'arraybuffer';
 ws.onopen = () => console.log('WS connected');
 ws.onmessage = (event) => {

@@ -353,17 +353,7 @@ function draw() {
 }
 
 // WebSocket connection
-console.log('Current protocol:', window.location.protocol);
-console.log('Current host:', window.location.host);
-console.log('Is HTTPS?', window.location.protocol === 'https:');
-
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-console.log('Selected WebSocket protocol:', protocol);
-
-const wsUrl = `${protocol}//${window.location.host}/ws`;
-console.log('Attempting WebSocket connection to:', wsUrl);
-
-const ws = new WebSocket(wsUrl);
+const ws = new WebSocket(`wss://${window.location.host}/ws`);
 ws.binaryType = 'arraybuffer';
 ws.onopen = () => console.log('WS connected');
 ws.onmessage = (event) => {

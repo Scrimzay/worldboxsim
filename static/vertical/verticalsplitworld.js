@@ -363,7 +363,7 @@ fetch(`https://${window.location.host}/wss`, { method: 'OPTIONS' })
   .then(() => console.log('WSS endpoint exists'))
   .catch(err => console.log('WSS endpoint check failed:', err));
 
-Then try the WebSocket connection
+//Then try the WebSocket connection
 const ws = new WebSocket(`wss://${window.location.host}/wss`);
 ws.binaryType = 'arraybuffer';
 ws.onopen = () => console.log('WS connected');
